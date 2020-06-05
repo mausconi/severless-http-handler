@@ -61,3 +61,30 @@ export const myHandler = (event: any) => {
     }
 }
 ```
+
+We could reduce this by removing the need for so many try catch statements however not limit the use cases
+
+```ts
+export const myHandler = (event: any) => {
+    if (!this.thing) {
+      throw new NotFoundException('This thing was not found);
+    }
+
+    try {
+        ...
+    } catch (e) {
+      console.error(e);
+      throw new HttpException(e.message);
+    }
+    
+     try {
+        ...
+    } catch (e: ValidationErrors) {
+      throw new BadRequestException(e.errors);
+    }
+    
+    if (this.database.emailExists(event.body.email) {
+      throw new UnprocessableEntityException(`email [${event.body.email}] is already registered`);
+    }
+}
+```
