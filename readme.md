@@ -48,5 +48,16 @@ export const myHandler = (event: any) => {
     } catch (e) {
         return this.responseObject(404, {});
     }
+    
+     try {
+        ...
+    } catch (e) {
+        return this.responseObject(400, {});
+    }
+     try {
+        ...
+    } catch (e) {
+        return this.responseObject(422, {});
+    }
 }
 ```
