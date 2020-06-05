@@ -65,6 +65,7 @@ export const myHandler = (event: any) => {
 We could reduce this by removing the need for so many try catch statements however not limit the use cases
 
 ```ts
+@HttpHandler()
 export const myHandler = (event: any) => {
     if (!this.thing) {
       throw new NotFoundException('This thing was not found);
