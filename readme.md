@@ -5,7 +5,7 @@ Proposal for http error responses with lambda
 ### Usage
 
 ```ts
-import {HttpHandler, NotFoundException} from '@homeservenow/nsh-shared';
+import {HttpHandler, NotFoundException} from '@homeservenow/lambda';
 
 
 @HttpHandler()
