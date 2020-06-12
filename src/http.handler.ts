@@ -6,16 +6,13 @@ import { HttpResponse } from "./interfaces";
 import { APIGatewayEvent, Context } from "aws-lambda";
 
 export const httpHandler = (
-  fn: (
-    event?: APIGatewayEvent,
-    context?: Context,
-  ) => any | Promise<any>,
+  fn: (event?: APIGatewayEvent, context?: Context) => any | Promise<any>,
   defaultStatus: HttpStatusCode = HttpStatusCode.OK,
 ): ((event: APIGatewayEvent, context: Context) => Promise<HttpResponse>) => (
   event: APIGatewayEvent,
   context: Context,
 ): Promise<HttpResponse> => {
-  return new Promise(async (resolve, reject) => {
+  return new Promise(async (resolve) => {
     try {
       const result = await fn(event, context);
 
