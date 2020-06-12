@@ -6,7 +6,7 @@ import { HttpResponse } from "./interfaces";
 import { APIGatewayEvent, Context } from "aws-lambda";
 
 export const httpHandler = (
-  fn: (event?: APIGatewayEvent, context?: Context) => any | Promise<any>,
+  fn: (event?: APIGatewayEvent, context?: Context) => any | HttpResponse | Promise<any | HttpResponse>,
   defaultStatus: HttpStatusCode = HttpStatusCode.OK,
 ): ((event: APIGatewayEvent, context: Context) => Promise<HttpResponse>) => (
   event: APIGatewayEvent,
@@ -17,6 +17,7 @@ export const httpHandler = (
       const result = await fn(event, context);
 
       if (isResponseType(result)) {
+        if (!result.hasOwnProperty('statusCode')) result.statusCode = defaultStatus;
         resolve(result);
       }
 

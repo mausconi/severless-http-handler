@@ -164,9 +164,9 @@ const returnAResponse = httpHandler(() => {
 
 const returnAResponseWithoutCodeButWithBody = httpHandler(() => {
     return {
-        body: {
+        body: JSON.stringify({
             success: true,
-        },
+        }),
     };
 });
 ```

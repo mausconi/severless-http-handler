@@ -123,4 +123,32 @@ describe("HttpHandler", () => {
       expect(result.statusCode).toBe(HttpStatusCode.FORBIDDEN);
     });
   });
+
+  describe('Can override default response', () => {
+      it('Can return response object with statusCode', async () => {
+        const testHttpMethod = httpHandler(() => {
+            return {
+                statusCode: HttpStatusCode.UNPROCESSABLE_ENTITY,
+            };
+          });
+          
+        expect(await testHttpMethod(
+            createMockAPIGatewayEvent({}),
+            context,
+        )).toStrictEqual({statusCode: HttpStatusCode.UNPROCESSABLE_ENTITY});
+      });
+
+      it('Can return response object with body', async () => {
+        const testHttpMethod = httpHandler(() => {
+            return {
+                body: "test",
+            };
+          });
+          
+        expect(await testHttpMethod(
+            createMockAPIGatewayEvent({}),
+            context,
+        )).toStrictEqual({body: "test", statusCode: 200});
+      });
+  });
 });

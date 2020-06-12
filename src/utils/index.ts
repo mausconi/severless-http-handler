@@ -10,4 +10,4 @@ export const isUndefined = (obj: any): obj is undefined =>
   typeof obj === "undefined";
 
 export const isResponseType = (obj: any): obj is HttpResponse =>
-  obj.hasOwnProperty("status") || obj.hasOwnProperty("body");
+  obj.hasOwnProperty("statusCode") || obj.hasOwnProperty("body");
