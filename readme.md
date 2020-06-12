@@ -6,18 +6,37 @@ Proposal for http error responses with lambda
 
 ```ts
 import {HttpHandler, NotFoundException} from '@homeservenow/lambda';
+import {APIGatewayEvent} from 'aws-lambda';
 
-export const myHandler = httpHandler((event: any) => {
-    throw new NotFoundExpcetion();
+export const myHandler = httpHandler((event: APIGatewayEvent) => {
+    const object: {test: true} | undefined = findObjectInDatabase(event.parameters.id);
+    
+    if (!object) {
+        throw new NotFoundExpcetion();
+    }
+
+    return object;
 });
 ```
 
-#### result
+#### Results
 
+**If there is no object**
 ```json
 {
     "status": 404,
     "message": "Not Found",
+}
+```
+
+**If there is an object returned**
+
+```json
+{
+    "status": 200,
+    "body": {
+        "test": true
+    }
 }
 ```
 

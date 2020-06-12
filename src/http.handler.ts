@@ -2,11 +2,14 @@ import { isResponseType } from "./utils";
 import { httpResponseHandler } from "./http.response.handler";
 import { httpErrorHandler } from "./http.error.handler";
 import { HttpStatusCode } from "./enum";
-import { HttpResponse, HttpHandlerMethod } from "./interfaces";
+import { HttpResponse } from "./interfaces";
 import { APIGatewayEvent, Context } from "aws-lambda";
 
 export const httpHandler = (
-  fn: HttpHandlerMethod,
+  fn: (
+    event?: APIGatewayEvent,
+    context?: Context,
+  ) => any | Promise<any>,
   defaultStatus: HttpStatusCode = HttpStatusCode.OK,
 ): ((event: APIGatewayEvent, context: Context) => Promise<HttpResponse>) => (
   event: APIGatewayEvent,
