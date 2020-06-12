@@ -9,7 +9,7 @@ const testHttpMethod = httpHandler(() => {
 
 describe('HttpHandler', () => {
     it('Will return 200', async () => {
-        const result = await testHttpMethod();
+        const result = await testHttpMethod({}, {});
 
         expect(result.status).toBe(HttpStatusCode.OK);
     });
@@ -21,7 +21,7 @@ describe('HttpHandler', () => {
             };
         }, HttpStatusCode.NO_CONTENT);
 
-        const result = await testHttpMethod();
+        const result = await testHttpMethod({}, {});
 
         expect(result.status).toBe(HttpStatusCode.NO_CONTENT);
     });
@@ -36,7 +36,7 @@ describe('HttpHandler', () => {
                 };
             }, HttpStatusCode.NO_CONTENT);
     
-            const result = await testHttpMethod();
+            const result = await testHttpMethod({}, {});
     
             expect(result.status).toBe(HttpStatusCode.NOT_FOUND);
         })
