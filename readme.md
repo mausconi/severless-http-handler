@@ -1,6 +1,6 @@
 ## AWS Lambda generic error handling for http
 
-Proposal for http error responses with lambda
+Proposal for universal http + error handling responses for lambda
 
 ### Usage
 
@@ -44,6 +44,15 @@ export const myHandler = httpHandler((event: APIGatewayEvent) => {
 
 There's been a lot of occurrences of nested conditions to return a response payload. 
 
+The idea of the httpHandler wrapper is to: 
+- Eliminate incorrect status code usage
+- Eliminate nested if statements
+- Massive try catc blocks
+- Add default handling for non handled exceptions
+- Force the usage of strong types for http methods such removing the use of "any" for event types and context'
+
+The above will result in cleaner and more easy to read code as well enforced types reducing errors. As well as handling responses nicely and enabling other features to be added such as logging etc
+
 ```ts
 export const myHandler = (event: any) => {
     if (this.notFound) {
@@ -56,25 +65,30 @@ Or even
 
 ```ts
 export const myHandler = (event: any) => {
-    if (!this.thing) {
-        return this.responseObject(202, {});
-    }
+    const object = getObjectFromDatabase(event.parameters.id);
 
-    try {
-        ...
-    } catch (e) {
-        return this.responseObject(404, {});
-    }
-    
-     try {
-        ...
-    } catch (e) {
-        return this.responseObject(400, {});
-    }
-     try {
-        ...
-    } catch (e) {
-        return this.responseObject(422, {});
+    if (object) {
+
+        try {
+            ...
+        } catch (e) {
+            return this.responseObject(404, {});
+        }
+        
+        try {
+            ...
+        } catch (e) {
+            return this.responseObject(400, {});
+        }
+        try {
+            ...
+        } catch (e) {
+            return this.responseObject(422, {});
+        }
+
+        return this.responseObject(202, {});
+    } else {
+        return this.responseObject(502, "Not Found");
     }
 }
 ```
