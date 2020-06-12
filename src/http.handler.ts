@@ -5,16 +5,26 @@ import { HttpStatusCode } from "./enum";
 import { HttpResponse } from "./interfaces";
 import { APIGatewayEvent, Context } from "aws-lambda";
 
-export const httpHandler = (
-  fn: (event?: APIGatewayEvent, context?: Context) => any | HttpResponse | Promise<any | HttpResponse>,
+export type APIGatewayJsonEvent<T extends {[s: string]: any}> = APIGatewayEvent & {
+  json: T;
+};
+
+export const httpHandler = <T extends {[s: string]: any}>(
+  fn: (event?: APIGatewayEvent | APIGatewayJsonEvent<T>, context?: Context) => any | HttpResponse | Promise<any | HttpResponse>,
   defaultStatus: HttpStatusCode = HttpStatusCode.OK,
 ): ((event: APIGatewayEvent, context: Context) => Promise<HttpResponse>) => (
   event: APIGatewayEvent,
   context: Context,
 ): Promise<HttpResponse> => {
   return new Promise(async (resolve) => {
+    let jsonEvent: APIGatewayJsonEvent<T>;
+
+    if (typeof event.body === 'string') { // TODO check content-type?
+      jsonEvent = {...event, json: JSON.parse(event.body)};
+    }
+
     try {
-      const result = await fn(event, context);
+      const result = await fn(jsonEvent || event, context);
 
       if (isResponseType(result)) {
         if (!result.hasOwnProperty('statusCode')) result.statusCode = defaultStatus;
@@ -26,6 +36,7 @@ export const httpHandler = (
 
       resolve(httpResponseHandler(result, defaultStatus));
     } catch (error) {
+      console.error(error);
       resolve(httpErrorHandler(error));
     }
   });

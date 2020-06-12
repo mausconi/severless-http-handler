@@ -171,49 +171,59 @@ const returnAResponseWithoutCodeButWithBody = httpHandler(() => {
 });
 ```
 
+## Typed json event 
+
+Use the `ApiGatewayJsonEvent<T>` for typed json events
+
+```ts
+const jsonExample = httpHandler((event: APIGatewayJsonEvent<JsonExampleDTOInterface>) => {
+    console.log("incoming data", event.json, event.body);
+});
+```
+
 ## Validation errors example 
 
 ```ts
-const validationErrorsHanlder = httpHandler((event: APIGatewayEvent) => {
-    if (!event.body || !event.body.name) {
+const validationErrorsHanlder = httpHandler((event: APIGatewayJsonEvent<{name?: string}>) => {
+    if (!event.json || !event.json.name) {
         throw new BadRequestException("Validation errors", [
             {
-                target: event.body,
+                target: event.json,
                 property: "name",
-                value: event.body.name,
+                value: event.json.name,
                 reason: "Name is required",
             }
         ]);
     }
 
-    console.log("valid", event.body.name);
+    console.log("valid", event.json.name);
 });
 ```
 
 or even 
 
 ```ts
-const validationErrorsHanlder = httpHandler((event: APIGatewayEvent) => {
+const validationErrorsHanlder = httpHandler((event: APIGatewayJsonEvent<{name?: string}>) => {
     const errors = [];
-    if (!event.body || !event.body.name) {
+    if (!event.json || !event.json.name) {
         errors.push({
-            target: event.body,
+            target: event.json,
             property: "name",
-            value: event.body.name,
+            value: event.json.name,
             reason: "Name is required",
         });
-    } else if (event.body.length >= 255) {
+    } else if (event.json.length >= 255) {
         errors.push({
-            target: event.body,
+            target: event.json,
             property: "name",
-            value: event.body.name,
+            value: event.json.name,
             reason: "Name is too long, max of 255 characters",
         });
     }
 
     if (errors.length >= 1) throw new BadRequestException("Validation errors", errors);
 
-    console.log("valid", event.body.name);
+    console.log("valid", event.json.name);
 });
 ```
 
