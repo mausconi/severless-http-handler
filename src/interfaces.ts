@@ -6,13 +6,14 @@ export interface HttpErrorResponseInterface extends Error {
 }
 
 export type HttpResponseType<T> = {
-  status: HttpStatusCode;
+  statusCode: HttpStatusCode;
   body: T;
   headers?: { [s: string]: string | number };
 };
 
 export type HttpResponse = {
-  status: HttpStatusCode;
-  body: string;
+  statusCode: HttpStatusCode;
+  body?: string;
+  message?: string;
   headers?: { [s: string]: string | number };
 };

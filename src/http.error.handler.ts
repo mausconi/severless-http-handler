@@ -9,9 +9,9 @@ const isHttpException = (
 export const httpErrorHandler = (
   error: HttpErrorResponseInterface | Error,
 ): HttpResponse => ({
-  status: isHttpException(error)
+  statusCode: isHttpException(error)
     ? error.getStatus()
     : HttpStatusCode.INTERNAL_SERVER_ERROR,
-  body: isHttpException(error) ? error.getData() : "Internal server error",
+  message: isHttpException(error) ? error.getData() : "Internal server error",
   headers: isHttpException(error) ? error.headers : undefined,
 });

@@ -12,7 +12,7 @@ export const myHandler = httpHandler((event: APIGatewayEvent) => {
     const object: {test: true} | undefined = findObjectInDatabase(event.parameters.id);
     
     if (!object) {
-        throw new NotFoundExpcetion();
+        throw new NotFoundException();
     }
 
     return object;
@@ -24,7 +24,7 @@ export const myHandler = httpHandler((event: APIGatewayEvent) => {
 **If there is no object**
 ```json
 {
-    "status": 404,
+    "statusCode": 404,
     "message": "Not Found",
 }
 ```
@@ -33,7 +33,7 @@ export const myHandler = httpHandler((event: APIGatewayEvent) => {
 
 ```json
 {
-    "status": 200,
+    "statusCode": 200,
     "body": {
         "test": true
     }
@@ -47,11 +47,11 @@ There's been a lot of occurrences of nested conditions to return a response payl
 The idea of the httpHandler wrapper is to: 
 - Eliminate incorrect status code usage
 - Eliminate nested if statements
-- Massive try catc blocks
+- Multiple massive try catch blocks
 - Add default handling for non handled exceptions
 - Force the usage of strong types for http methods such removing the use of "any" for event types and context'
 
-The above will result in cleaner and more easy to read code as well enforced types reducing errors. As well as handling responses nicely and enabling other features to be added such as logging etc
+Eliminating the above will result in cleaner and more easy to read code as well enforced types reducing errors. As well as handling responses nicely and enabling other features to be added such as logging etc
 
 ```ts
 export const myHandler = (event: any) => {

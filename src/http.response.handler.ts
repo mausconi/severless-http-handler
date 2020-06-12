@@ -7,8 +7,8 @@ export const httpResponsePayloadHandler = (payload: any): string =>
 
 export const httpResponseHandler = (
   payload: any,
-  status: HttpStatusCode,
+  statusCode: HttpStatusCode,
 ): HttpResponse => ({
   body: httpResponsePayloadHandler(payload),
-  status,
+  statusCode,
 });

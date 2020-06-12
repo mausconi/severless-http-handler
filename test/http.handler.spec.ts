@@ -1,4 +1,6 @@
-import {httpHandler, NotFoundException, HttpStatusCode} from '../src';
+import {httpHandler, NotFoundException, HttpStatusCode, UnprocessableEntityException, BadRequestException} from '../src';
+import {createMockAPIGatewayEvent} from './events';
+import * as mockContext from "aws-lambda-mock-context";
 
 const testHttpMethod = httpHandler(() => {
     return {
@@ -7,10 +9,13 @@ const testHttpMethod = httpHandler(() => {
 });
 
 describe('HttpHandler', () => {
-    it('Will return 200', async () => {
-        const result = await testHttpMethod({}, {});
 
-        expect(result.status).toBe(HttpStatusCode.OK);
+    const context = mockContext();
+
+    it('Will return 200', async () => {
+        const result = await testHttpMethod(createMockAPIGatewayEvent({}), context);
+
+        expect(result.statusCode).toBe(HttpStatusCode.OK);
     });
 
     it('Can have different default return value', async () => {
@@ -20,9 +25,9 @@ describe('HttpHandler', () => {
             };
         }, HttpStatusCode.NO_CONTENT);
 
-        const result = await testHttpMethod({}, {});
+        const result = await testHttpMethod(createMockAPIGatewayEvent({}), context);
 
-        expect(result.status).toBe(HttpStatusCode.NO_CONTENT);
+        expect(result.statusCode).toBe(HttpStatusCode.NO_CONTENT);
     });
 
     describe('Can return http exceptions using exceptions', () => {
@@ -33,11 +38,39 @@ describe('HttpHandler', () => {
                 return {
                     test: true,
                 };
-            }, HttpStatusCode.NO_CONTENT);
+            });
     
-            const result = await testHttpMethod({}, {});
+            const result = await testHttpMethod(createMockAPIGatewayEvent({}), context);
     
-            expect(result.status).toBe(HttpStatusCode.NOT_FOUND);
-        })
+            expect(result.statusCode).toBe(HttpStatusCode.NOT_FOUND);
+        });
+
+        it('UnprocessableEntityException', async () => {
+            const testHttpMethod = httpHandler(() => {
+                throw new UnprocessableEntityException();
+    
+                return {
+                    test: true,
+                };
+            });
+    
+            const result = await testHttpMethod(createMockAPIGatewayEvent({}), context);
+    
+            expect(result.statusCode).toBe(HttpStatusCode.UNPROCESSABLE_ENTITY);
+        });
+
+        it('BadRequestException', async () => {
+            const testHttpMethod = httpHandler(() => {
+                throw new BadRequestException();
+    
+                return {
+                    test: true,
+                };
+            });
+    
+            const result = await testHttpMethod(createMockAPIGatewayEvent({}), context);
+    
+            expect(result.statusCode).toBe(HttpStatusCode.BAD_REQUEST);
+        });
     });
 });
