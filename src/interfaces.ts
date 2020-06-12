@@ -5,6 +5,12 @@ export interface HttpErrorResponseInterface extends Error {
   readonly data?: any;
 }
 
+export type HttpResponseType<T> = {
+  status: HttpStatusCode;
+  body: T;
+  headers?: { [s: string]: string | number };
+};
+
 export type HttpResponse = {
   status: HttpStatusCode;
   body: string;

@@ -1,9 +1,7 @@
-import { httpErrorHandler } from "./http.error.handler";
 import { HttpStatusCode } from "./enum";
-import { httpResponseHandler } from "./http.response.handler";
-import { isResponseType } from "./utils";
+import { httpHandler } from "./http.handler";
 
-export const HttpHandler = (
+export const HttpHandlerDecorator = (
   defaultStatus: HttpStatusCode = HttpStatusCode.OK,
 ): MethodDecorator => (
   target: Object,
@@ -12,17 +10,5 @@ export const HttpHandler = (
 ) => {
   const originalValue = descriptor.value;
 
-  descriptor.value = async function (...args) {
-    try {
-      const result = originalValue.apply(this, args);
-
-      if (isResponseType(result)) {
-        return result;
-      }
-
-      return httpResponseHandler(result, defaultStatus);
-    } catch (error) {
-      httpErrorHandler(error);
-    }
-  };
+  descriptor.value = httpHandler(originalValue, defaultStatus);
 };
