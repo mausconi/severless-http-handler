@@ -46,4 +46,3 @@ export const createMockAPIGatewayEvent = ({ ...args }): APIGatewayProxyEvent =>
     stageVariables: {},
     ...args,
   });
-  

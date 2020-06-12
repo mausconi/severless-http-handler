@@ -1,1 +1,1 @@
-export * from './api.gateway.event';
+export * from "./api.gateway.event";

@@ -8,8 +8,8 @@ Proposal for universal http + error handling responses for lambda
 import {HttpHandler, NotFoundException} from '@homeservenow/lambda';
 import {APIGatewayEvent} from 'aws-lambda';
 
-export const myHandler = httpHandler((event: APIGatewayEvent) => {
-    const object: {test: true} | undefined = findObjectInDatabase(event.parameters.id);
+export const myHandler = httpHandler(async (event: APIGatewayEvent): Promise<{test: true} | never> => {
+    const object: {test: true} | undefined = await findObjectInDatabase(event.parameters.id);
     
     if (!object) {
         throw new NotFoundException();
@@ -119,6 +119,58 @@ export const myHandler = httpHandler((event: any) => {
     }
 });
 ```
+
+## Simple implementation 
+
+```ts
+export const mySimpleHandler = httpHanlder(() => {
+    return "Hello! I am a simple return";
+});
+```
+
+## Default status code
+
+```ts
+import {HttpStatusCode, httpHandler} from "@homeservenow/lambda";
+
+export const defaultStatusNoContent = httpHandler(() => {
+    console.log("I don't return so I am a void");
+}, HttpStatusCode.NO_CONTENT);
+```
+
+## Promises
+
+```ts
+export const awaitThisHandler = httpHandler(async (event: APIGatewayEvent): Promise<{success: boolean}> => {
+    const result = await awaitSomeFunction();
+
+    return {sucess: result !== undefined};
+});
+```
+
+## Overriding response handling
+
+Returning an object with either body or statusCode defined will result in httpHandler not manipulating your response.
+
+```ts
+const returnAResponse = httpHandler(() => {
+    return {
+        statusCode: HttpStatusCode.NO_CONTENT,
+        headers: {
+            [`X-Some-header`]: 'header value',
+        },
+    };
+});
+
+const returnAResponseWithoutCodeButWithBody = httpHandler(() => {
+    return {
+        body: {
+            success: true,
+        },
+    };
+});
+```
+
 ### Decorators 
 
 For classes we can use the httpHandlerDecorator like so 

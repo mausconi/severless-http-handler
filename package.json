@@ -15,7 +15,7 @@
     "typescript": "^3.9.5"
   },
   "scripts": {
-    "format": "prettier --write \"src/**/!(*.spec).ts\"",
+    "format": "prettier --write \"(src|test)/**/*.ts\"",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage"
