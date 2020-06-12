@@ -14,7 +14,7 @@ export const httpHandler = (
 ): Promise<HttpResponse> => {
   return new Promise(async (resolve, reject) => {
     try {
-      const result = await fn.apply(this, [event, context]);
+      const result = await fn(event, context);
 
       if (isResponseType(result)) {
         resolve(result);

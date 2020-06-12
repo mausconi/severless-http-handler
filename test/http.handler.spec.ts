@@ -1,5 +1,4 @@
-import { HttpStatusCode } from "../src/enum";
-import {httpHandler, NotFoundException} from '../src';
+import {httpHandler, NotFoundException, HttpStatusCode} from '../src';
 
 const testHttpMethod = httpHandler(() => {
     return {
