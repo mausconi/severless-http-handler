@@ -171,6 +171,52 @@ const returnAResponseWithoutCodeButWithBody = httpHandler(() => {
 });
 ```
 
+## Validation errors example 
+
+```ts
+const validationErrorsHanlder = httpHandler((event: APIGatewayEvent) => {
+    if (!event.body || !event.body.name) {
+        throw new BadRequestException("Validation errors", [
+            {
+                target: event.body,
+                property: "name",
+                value: event.body.name,
+                reason: "Name is required",
+            }
+        ]);
+    }
+
+    console.log("valid", event.body.name);
+});
+```
+
+or even 
+
+```ts
+const validationErrorsHanlder = httpHandler((event: APIGatewayEvent) => {
+    const errors = [];
+    if (!event.body || !event.body.name) {
+        errors.push({
+            target: event.body,
+            property: "name",
+            value: event.body.name,
+            reason: "Name is required",
+        });
+    } else if (event.body.length >= 255) {
+        errors.push({
+            target: event.body,
+            property: "name",
+            value: event.body.name,
+            reason: "Name is too long, max of 255 characters",
+        });
+    }
+
+    if (errors.length >= 1) throw new BadRequestException("Validation errors", errors);
+
+    console.log("valid", event.body.name);
+});
+```
+
 ### Decorators 
 
 For classes we can use the httpHandlerDecorator like so 

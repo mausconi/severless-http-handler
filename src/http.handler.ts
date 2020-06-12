@@ -1,5 +1,5 @@
 import { isResponseType } from "./utils";
-import { httpResponseHandler } from "./http.response.handler";
+import { httpResponseHandler, httpResponsePayloadHandler } from "./http.response.handler";
 import { httpErrorHandler } from "./http.error.handler";
 import { HttpStatusCode } from "./enum";
 import { HttpResponse } from "./interfaces";
@@ -18,6 +18,9 @@ export const httpHandler = (
 
       if (isResponseType(result)) {
         if (!result.hasOwnProperty('statusCode')) result.statusCode = defaultStatus;
+
+        if (result.body) result.body = httpResponsePayloadHandler(result.body);
+
         resolve(result);
       }
 

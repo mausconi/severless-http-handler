@@ -9,6 +9,7 @@ import {
 } from "../src";
 import { createMockAPIGatewayEvent } from "./events";
 import * as mockContext from "aws-lambda-mock-context";
+import { APIGatewayEvent } from "aws-lambda";
 
 const testHttpMethod = httpHandler(() => {
   return {
@@ -149,6 +150,59 @@ describe("HttpHandler", () => {
             createMockAPIGatewayEvent({}),
             context,
         )).toStrictEqual({body: "test", statusCode: 200});
+      });
+
+      it('Can return response object with body, statusCode and headers', async () => {
+        const testHttpMethod = httpHandler(() => {
+            return {
+                statusCode: HttpStatusCode.SUCCESS,
+                body: {
+                    someString: "hello",
+                },
+                headers: {
+                    ['X-Some-Header']: "test",
+                },
+            };
+          });
+          
+        expect(await testHttpMethod(
+            createMockAPIGatewayEvent({}),
+            context,
+        )).toStrictEqual({body: "{\"someString\":\"hello\"}", statusCode: 201, headers: {["X-Some-Header"]: "test"}});
+      });
+  });
+
+  describe("Can return additional exception data", () => {
+      it('Can return validation errors', async () => {
+        const validationErrorsHanlder = httpHandler((event: APIGatewayEvent) => {
+            const data: {name?: string} = JSON.parse(event.body);
+            if (!data || !data.name) {
+                throw new BadRequestException("Validation errors", [
+                    {
+                        target: data,
+                        property: "name",
+                        value: data.name,
+                        reason: "Name is required",
+                    },
+                ]);
+            }
+        
+            console.log("valid", data.name);
+        });
+
+        expect(await validationErrorsHanlder(createMockAPIGatewayEvent({
+            body: "{}",
+        }), context)).toStrictEqual({
+            statusCode: HttpStatusCode.BAD_REQUEST,
+            message: "Validation errors",
+            body: JSON.stringify([{
+                    target: {},
+                    property: "name",
+                    value: undefined,
+                    reason: "Name is required",
+            }]),
+            headers: undefined,
+        });
       });
   });
 });
