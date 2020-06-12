@@ -1,0 +1,9 @@
+{
+  "name": "@homeservernow/lambda",
+  "devDependencies": {
+    "prettier": "^2.0.5"
+  },
+  "scripts": {
+    "format": "prettier --write \"src/**/!(*.spec).ts\""
+  }
+}
