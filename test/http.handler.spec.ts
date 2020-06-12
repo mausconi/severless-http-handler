@@ -178,7 +178,7 @@ describe("HttpHandler", () => {
             if (!event.body || !event.json.name) {
                 throw new BadRequestException("Validation errors", [
                     {
-                        target: event.body,
+                        target: event.json,
                         property: "name",
                         value: event.json.name,
                         reason: "Name is required",

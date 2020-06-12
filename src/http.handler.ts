@@ -9,9 +9,17 @@ export type APIGatewayJsonEvent<T extends {[s: string]: any}> = APIGatewayEvent 
   json: T;
 };
 
+/**
+ * A universal wrapper function response hander for aws handlers
+ * 
+ * @param fn your custom handler function
+ * @param defaultStatus Http Status Code
+ * @param errorHandling if set to 'error' response will not be returned, set to true or 'log' for a logged response. 'error' is meant for testing to omit the response to see the exception
+ */
 export const httpHandler = <T extends {[s: string]: any}>(
   fn: (event?: APIGatewayEvent | APIGatewayJsonEvent<T>, context?: Context) => any | HttpResponse | Promise<any | HttpResponse>,
   defaultStatus: HttpStatusCode = HttpStatusCode.OK,
+  errorHandling: 'log' | 'error' | boolean = false, 
 ): ((event: APIGatewayEvent, context: Context) => Promise<HttpResponse>) => (
   event: APIGatewayEvent,
   context: Context,
@@ -36,7 +44,19 @@ export const httpHandler = <T extends {[s: string]: any}>(
 
       resolve(httpResponseHandler(result, defaultStatus));
     } catch (error) {
-      console.error(error);
+
+      if (errorHandling) {
+        switch (errorHandling) {
+          case 'error':
+            console.error(error);
+            break;
+          case 'log':
+          default:
+            console.log(error);
+            break;
+        }
+      }
+
       resolve(httpErrorHandler(error));
     }
   });
