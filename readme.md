@@ -7,11 +7,9 @@ Proposal for http error responses with lambda
 ```ts
 import {HttpHandler, NotFoundException} from '@homeservenow/lambda';
 
-
-@HttpHandler()
-export const myHandler = (event: any) => {
+export const myHandler = httpHandler((event: any) => {
     throw new NotFoundExpcetion();
-}
+});
 ```
 
 #### result
@@ -65,10 +63,9 @@ export const myHandler = (event: any) => {
 We could reduce this by removing the need for so many try catch statements however not limit the use cases
 
 ```ts
-@HttpHandler()
-export const myHandler = (event: any) => {
+export const myHandler = httpHandler((event: any) => {
     if (!this.thing) {
-      throw new NotFoundException('This thing was not found);
+      throw new NotFoundException('This thing was not found');
     }
 
     try {
@@ -84,8 +81,20 @@ export const myHandler = (event: any) => {
       throw new BadRequestException(e.errors);
     }
     
-    if (this.database.emailExists(event.body.email) {
+    if (this.database.emailExists(event.body.email)) {
       throw new UnprocessableEntityException(`email [${event.body.email}] is already registered`);
+    }
+});
+```
+### Decorators 
+
+For classes we can use the httpHandlerDecorator like so 
+
+```ts
+export class Handlers {
+    @HttpHandlerDecorator()
+    myMethod = () => {
+
     }
 }
 ```
