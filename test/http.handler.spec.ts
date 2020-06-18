@@ -193,7 +193,6 @@ describe("HttpHandler", () => {
             body: "{}",
         }), context)).toStrictEqual({
             statusCode: HttpStatusCode.BAD_REQUEST,
-            message: "Validation errors",
             body: JSON.stringify([{
                     target: {},
                     property: "name",

@@ -1,6 +1,6 @@
 import { isObject } from "./utils";
-import { HttpResponse } from "./interfaces";
 import { HttpStatusCode } from "./enum";
+import { APIGatewayProxyResult } from "aws-lambda";
 
 export const httpResponsePayloadHandler = (payload: any): string =>
   isObject(payload) ? JSON.stringify(payload) : String(payload);
@@ -8,7 +8,7 @@ export const httpResponsePayloadHandler = (payload: any): string =>
 export const httpResponseHandler = (
   payload: any,
   statusCode: HttpStatusCode,
-): HttpResponse => ({
+): APIGatewayProxyResult => ({
   body: httpResponsePayloadHandler(payload),
   statusCode,
 });
