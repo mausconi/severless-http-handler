@@ -212,7 +212,7 @@ const validationErrorsHanlder = httpHandler((event: APIGatewayJsonEvent<{name?: 
             value: event.json.name,
             reason: "Name is required",
         });
-    } else if (event.json.length >= 255) {
+    } else if (event.json.name.length >= 255) {
         errors.push({
             target: event.json,
             property: "name",
