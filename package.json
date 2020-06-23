@@ -1,5 +1,6 @@
 {
   "name": "@homeservernow/lambda",
+  "version": "1.0.0-beta",
   "author": "Ashleigh Simonelli <ashleigh.homeserve@gmail.com",
   "devDependencies": {
     "@serverless/event-mocks": "^1.1.1",
