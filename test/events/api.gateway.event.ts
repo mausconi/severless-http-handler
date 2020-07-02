@@ -5,7 +5,7 @@ export const createMockAPIGatewayEvent = ({ ...args }): APIGatewayProxyEvent =>
   createEvent("aws:apiGateway", {
     body: null,
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     httpMethod: "GET",
     isBase64Encoded: false,

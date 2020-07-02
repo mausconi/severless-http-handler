@@ -1,4 +1,5 @@
 import { APIGatewayProxyResult } from "aws-lambda";
+import { HttpErrorException } from "./../exceptions";
 
 export const isObject = (fn: any): fn is object =>
   !isNil(fn) && typeof fn === "object";
@@ -11,3 +12,6 @@ export const isUndefined = (obj: any): obj is undefined =>
 
 export const isResponseType = (obj: any): obj is APIGatewayProxyResult =>
   obj.hasOwnProperty("statusCode") || obj.hasOwnProperty("body");
+
+export const isHttpErrorException = (obj: any): obj is HttpErrorException =>
+  obj instanceof HttpErrorException;
