@@ -1,4 +1,6 @@
-## AWS Lambda generic error handling for http
+## AWS Lambda generic handling for http
+
+<a href="https://travis-ci.org/github/Homeservenow/severless-http-handler"><img src="https://travis-ci.org/github/Homeservenow/severless-http-handler.svg?branch=master" alt="travis"/></a>
 
 Proposal for universal http + error handling responses for lambda
 
