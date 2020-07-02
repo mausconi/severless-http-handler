@@ -1,7 +1,7 @@
 {
   "name": "@homeservenow/serverless-aws-handler",
   "version": "1.0.0-beta",
-  "author": "Ashleigh Simonelli <ashleigh.homeserve@gmail.com",
+  "author": "Ashleigh Simonelli <ashleigh.homeserve@gmail.com>",
   "devDependencies": {
     "@serverless/event-mocks": "^1.1.1",
     "@types/aws-lambda": "^8.10.55",
@@ -21,7 +21,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
-    "coveralls": "yarn run test:cov --coverageReporters=text-lcov | coveralls"
+    "coveralls": "yarn run test:cov --coverageReporters=text-lcov | coveralls",
+    "build": "tsc -p ."
   },
   "jest": {
     "moduleFileExtensions": [
