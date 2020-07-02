@@ -21,7 +21,7 @@ describe("Logging Handling", () => {
     beforeEach(() => {
       global.console = {
         ...global.console,
-        //warn: jest.fn(),
+        warn: jest.fn(),
         log: jest.fn(),
         error: jest.fn(),
       };

@@ -12,15 +12,19 @@ export class HttpErrorException extends Error
     super(message);
   }
 
+  getMessage(): string {
+    return this.message;
+  }
+
   getStatus(): HttpStatusCode {
     return this.status;
   }
 
-  getData(): string | undefined {
-    return typeof this.data === "string"
-      ? this.data
-      : Array.isArray(this.data) || this.data === "object"
-      ? JSON.stringify(this.data)
-      : undefined;
+  hasData(): boolean {
+    return this.data;
+  }
+
+  getData(): any {
+    return this.data;
   }
 }

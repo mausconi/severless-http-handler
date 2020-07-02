@@ -201,14 +201,17 @@ describe("HttpHandler", () => {
         ),
       ).toStrictEqual({
         statusCode: HttpStatusCode.BAD_REQUEST,
-        body: JSON.stringify([
-          {
-            target: {},
-            property: "name",
-            value: undefined,
-            reason: "Name is required",
-          },
-        ]),
+        body: JSON.stringify({
+          message: "Validation errors",
+          data: [
+            {
+              target: {},
+              property: "name",
+              value: undefined,
+              reason: "Name is required",
+            },
+          ],
+        }),
         headers: undefined,
       });
     });
