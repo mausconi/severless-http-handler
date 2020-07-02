@@ -14,6 +14,9 @@ export const httpErrorHandler = (
     ? error.getStatus()
     : HttpStatusCode.INTERNAL_SERVER_ERROR,
   //message: isHttpException(error) ? error.message : "Internal server error",
-  headers: isHttpException(error) && Object.keys(error.headers).length >= 1 ? error.headers : undefined,
+  headers:
+    isHttpException(error) && Object.keys(error.headers).length >= 1
+      ? error.headers
+      : undefined,
   body: isHttpException(error) ? error.getData() : undefined,
 });

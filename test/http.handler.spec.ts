@@ -11,7 +11,7 @@ import {
 import { createMockAPIGatewayEvent } from "./events";
 import * as mockContext from "aws-lambda-mock-context";
 
-const testHttpMethod = httpHandler(() => {
+const testHttpMethod = httpHandler(async () => {
   return {
     test: true,
   };
@@ -27,7 +27,7 @@ describe("HttpHandler", () => {
   });
 
   it("Can have different default return value", async () => {
-    const testHttpMethod = httpHandler(() => {
+    const testHttpMethod = httpHandler(async () => {
       return {
         test: true,
       };
@@ -40,7 +40,7 @@ describe("HttpHandler", () => {
 
   describe("Can return http exceptions using exceptions", () => {
     it("NotFoundException", async () => {
-      const testHttpMethod = httpHandler(() => {
+      const testHttpMethod = httpHandler(async () => {
         throw new NotFoundException();
 
         return {
@@ -57,7 +57,7 @@ describe("HttpHandler", () => {
     });
 
     it("UnprocessableEntityException", async () => {
-      const testHttpMethod = httpHandler(() => {
+      const testHttpMethod = httpHandler(async () => {
         throw new UnprocessableEntityException();
 
         return {
@@ -74,7 +74,7 @@ describe("HttpHandler", () => {
     });
 
     it("BadRequestException", async () => {
-      const testHttpMethod = httpHandler(() => {
+      const testHttpMethod = httpHandler(async () => {
         throw new BadRequestException();
 
         return {
@@ -91,7 +91,7 @@ describe("HttpHandler", () => {
     });
 
     it("UnauthorizedException", async () => {
-      const testHttpMethod = httpHandler(() => {
+      const testHttpMethod = httpHandler(async () => {
         throw new UnauthorizedException();
 
         return {
@@ -108,7 +108,7 @@ describe("HttpHandler", () => {
     });
 
     it("ForbiddenException", async () => {
-      const testHttpMethod = httpHandler(() => {
+      const testHttpMethod = httpHandler(async () => {
         throw new ForbiddenException();
 
         return {
@@ -125,82 +125,92 @@ describe("HttpHandler", () => {
     });
   });
 
-  describe('Can override default response', () => {
-      it('Can return response object with statusCode', async () => {
-        const testHttpMethod = httpHandler(() => {
-            return {
-                statusCode: HttpStatusCode.UNPROCESSABLE_ENTITY,
-            };
-          });
-          
-        expect(await testHttpMethod(
-            createMockAPIGatewayEvent({}),
-            context,
-        )).toStrictEqual({statusCode: HttpStatusCode.UNPROCESSABLE_ENTITY});
+  describe("Can override default response", () => {
+    it("Can return response object with statusCode", async () => {
+      const testHttpMethod = httpHandler(async () => {
+        return {
+          statusCode: HttpStatusCode.UNPROCESSABLE_ENTITY,
+        };
       });
 
-      it('Can return response object with body', async () => {
-        const testHttpMethod = httpHandler(() => {
-            return {
-                body: "test",
-            };
-          });
-          
-        expect(await testHttpMethod(
-            createMockAPIGatewayEvent({}),
-            context,
-        )).toStrictEqual({body: "test", statusCode: 200});
+      expect(
+        await testHttpMethod(createMockAPIGatewayEvent({}), context),
+      ).toStrictEqual({ statusCode: HttpStatusCode.UNPROCESSABLE_ENTITY });
+    });
+
+    it("Can return response object with body", async () => {
+      const testHttpMethod = httpHandler(async () => {
+        return {
+          body: "test",
+        };
       });
 
-      it('Can return response object with body, statusCode and headers', async () => {
-        const testHttpMethod = httpHandler(() => {
-            return {
-                statusCode: HttpStatusCode.SUCCESS,
-                body: {
-                    someString: "hello",
-                },
-                headers: {
-                    ['X-Some-Header']: "test",
-                },
-            };
-          });
-          
-        expect(await testHttpMethod(
-            createMockAPIGatewayEvent({}),
-            context,
-        )).toStrictEqual({body: "{\"someString\":\"hello\"}", statusCode: 201, headers: {["X-Some-Header"]: "test"}});
+      expect(
+        await testHttpMethod(createMockAPIGatewayEvent({}), context),
+      ).toStrictEqual({ body: "test", statusCode: 200 });
+    });
+
+    it("Can return response object with body, statusCode and headers", async () => {
+      const testHttpMethod = httpHandler(async () => {
+        return {
+          statusCode: HttpStatusCode.SUCCESS,
+          body: {
+            someString: "hello",
+          },
+          headers: {
+            ["X-Some-Header"]: "test",
+          },
+        };
       });
+
+      expect(
+        await testHttpMethod(createMockAPIGatewayEvent({}), context),
+      ).toStrictEqual({
+        body: '{"someString":"hello"}',
+        statusCode: 201,
+        headers: { ["X-Some-Header"]: "test" },
+      });
+    });
   });
 
   describe("Can return additional exception data", () => {
-      it('Can return validation errors', async () => {
-        const validationErrorsHanlder = httpHandler<{name?: string}>((event: APIGatewayJsonEvent<{name?: string}>) => {
-            if (!event.body || !event.json.name) {
-                throw new BadRequestException("Validation errors", [
-                    {
-                        target: event.json,
-                        property: "name",
-                        value: event.json.name,
-                        reason: "Name is required",
-                    },
-                ]);
-            }
-        
-            console.log("valid", event.json.name);
-        });
+    it("Can return validation errors", async () => {
+      const validationErrorsHanlder = httpHandler<{ name?: string }, void>(
+        async (event: APIGatewayJsonEvent<{ name?: string }>) => {
+          if (!event.body || !event.json.name) {
+            throw new BadRequestException("Validation errors", [
+              {
+                target: event.json,
+                property: "name",
+                value: event.json.name,
+                reason: "Name is required",
+              },
+            ]);
+          }
 
-        expect(await validationErrorsHanlder(createMockAPIGatewayEvent({
+          console.log("valid", event.json.name);
+        },
+      );
+
+      expect(
+        await validationErrorsHanlder(
+          createMockAPIGatewayEvent({
             body: "{}",
-        }), context)).toStrictEqual({
-            statusCode: HttpStatusCode.BAD_REQUEST,
-            body: JSON.stringify([{
-                    target: {},
-                    property: "name",
-                    value: undefined,
-                    reason: "Name is required",
-            }]),
-            headers: undefined,
-        });
+          }),
+          context,
+        ),
+      ).toStrictEqual({
+        statusCode: HttpStatusCode.BAD_REQUEST,
+        body: JSON.stringify([
+          {
+            target: {},
+            property: "name",
+            value: undefined,
+            reason: "Name is required",
+          },
+        ]),
+        headers: undefined,
       });
+    });
   });
 });
