@@ -1,6 +1,6 @@
 ## AWS Lambda generic handling for http
 
-<a href="https://travis-ci.org/github/Homeservenow/severless-http-handler"><img src="https://travis-ci.org/github/Homeservenow/severless-http-handler.svg?branch=master" alt="travis"/></a>
+<a href="https://travis-ci.org/github/Homeservenow/severless-http-handler"><img src="https://api.travis-ci.org/Homeservenow/severless-http-handler.svg?branch=master" alt="travis"/></a>
 <a href='https://coveralls.io/github/Homeservenow/severless-http-handler?branch=master'><img src='https://coveralls.io/repos/github/Homeservenow/severless-http-handler/badge.svg?branch=master' alt='Coverage Status' /></a>
 
 
