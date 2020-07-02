@@ -4,7 +4,9 @@ import { APIGatewayProxyEvent } from "aws-lambda";
 export const createMockAPIGatewayEvent = ({ ...args }): APIGatewayProxyEvent =>
   createEvent("aws:apiGateway", {
     body: null,
-    headers: {},
+    headers: {
+      'Content-Type': 'application/json',
+    },
     httpMethod: "GET",
     isBase64Encoded: false,
     multiValueHeaders: {},

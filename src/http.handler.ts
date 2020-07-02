@@ -6,6 +6,7 @@ import {
 import { httpErrorHandler } from "./http.error.handler";
 import { HttpStatusCode } from "./enum";
 import { APIGatewayEvent, Context, APIGatewayProxyResult } from "aws-lambda";
+import { HttpErrorException } from "./exceptions";
 
 export type APIGatewayJsonEvent<
   T extends { [s: string]: any }
@@ -23,7 +24,8 @@ export type HttpHandlerFunction<T, R> = (
  *
  * @param fn your custom handler function
  * @param defaultStatus Http Status Code
- * @param errorHandling if set to 'error' response will not be returned, set to true or 'log' for a logged response. 'error' is meant for testing to omit the response to see the exception
+ * @param errorHandling if set to 'error' response will not be returned, set to true or 'log' for a logged response. 
+ *   'error' is meant for testing to omit the response to see the exception
  */
 export const httpHandler = <T extends { [s: string]: any }, R extends any>(
   fn: HttpHandlerFunction<T, R>,
@@ -39,9 +41,12 @@ export const httpHandler = <T extends { [s: string]: any }, R extends any>(
   return new Promise(async (resolve) => {
     let jsonEvent: APIGatewayJsonEvent<T>;
 
-    if (typeof event.body === "string") {
-      // TODO check content-type?
-      jsonEvent = { ...event, json: JSON.parse(event.body) };
+    if (typeof event.body === "string" && event?.headers['Content-Type']?.toLowerCase() === 'application/json') {
+      try {
+        jsonEvent = { ...event, json: JSON.parse(event.body) };
+      } catch (e) {
+        resolve(httpErrorHandler(new HttpErrorException('Malformed JSON', HttpStatusCode.BAD_REQUEST)));
+      }
     }
 
     try {
